@@ -1,9 +1,9 @@
 #pragma once
 #include <Arduino.h>
 
-// I2C LCD driver (AiP31068 / PCF8574 backpack, HD44780-compatible).
-// Call InitializeLcd() once before any other LCD function.
-void InitializeLcd(uint8_t i2cAddress, uint8_t cols, uint8_t rows);
+void InitializeLcd(uint8_t rs, uint8_t en,
+                   uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7,
+                   uint8_t cols, uint8_t rows);
 
 void LcdPrintChar(char c);
 void LcdClear();
