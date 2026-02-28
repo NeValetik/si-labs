@@ -23,18 +23,23 @@ void TaskButtonMeasureInit(uint8_t buttonPin,
 
 // Non-blocking state machine — returns immediately every call.
 void TaskButtonMeasure() {
-    bool pressed = ReadButtonRaw(ButtonPin);
-
     if (State == BtnIdle) {
+        // Only read button signal when idle to detect a new press
+        bool pressed = ReadButtonRaw(ButtonPin);
         if (pressed) {
             // Turn off result LEDs at the start of each new press.
             SetLedState(GreenLedPin, false);
             SetLedState(RedLedPin,   false);
             PressStartMs = millis();
             State        = BtnPressed;
+            // Don't read button signal while processing - wait for release
         }
     } else {  // BtnPressed
+        // Only read button signal after press is complete to detect release
+        // (not while processing, only to check if button was released)
+        bool pressed = ReadButtonRaw(ButtonPin);
         if (!pressed) {
+            // Button was released - now process the result
             uint32_t duration = millis() - PressStartMs;
             SetPressResult(duration);
 
@@ -46,5 +51,6 @@ void TaskButtonMeasure() {
             }
             State = BtnIdle;
         }
+        // If still pressed, don't process - just wait for release on next call
     }
 }

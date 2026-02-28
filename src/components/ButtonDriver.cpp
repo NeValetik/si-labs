@@ -5,5 +5,5 @@ void InitializeButton(uint8_t pin) {
 }
 
 bool ReadButtonRaw(uint8_t pin) {
-    return digitalRead(pin) == LOW;  // active-LOW: pulled up, shorts to GND when pressed
+    return digitalRead(pin) == HIGH;  // active-LOW: pulled up, shorts to GND when pressed
 }
