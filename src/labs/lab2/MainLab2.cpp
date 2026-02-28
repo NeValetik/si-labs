@@ -5,7 +5,6 @@
 #include "drivers/KeypadDriver.h"
 #include "services/StdioRedirect.h"
 
-// ── Pin assignments ───────────────────────────────────────────────────────────
 const uint8_t GreenLedPin  = 12;
 const uint8_t RedLedPin    = 13;
 
@@ -29,9 +28,8 @@ const uint8_t KeypadCol1Pin  = A1;
 const uint8_t KeypadCol2Pin  = A2;
 const uint8_t KeypadCol3Pin  = A3;
 
-// ── Application constants ─────────────────────────────────────────────────────
-const char    ValidCode[]       = "1234";
-const uint8_t CodeLength        = 4;
+const char    ValidCode[]       = "96831111";
+const uint8_t CodeLength        = 8;
 const uint16_t ResultDisplayMs  = 2000;
 
 static LcdStream LcdIo;
