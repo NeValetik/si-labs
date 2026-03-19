@@ -10,7 +10,6 @@
 void TaskButtonMeasureRtosFunc(void* pvParameters) {
     const TickType_t RecTicks = pdMS_TO_TICKS(REC_MEASURE_MS);
 
-    // Apply initial offset (yield at least one tick even if offset is 0).
     vTaskDelay(pdMS_TO_TICKS(OFFS_MEASURE_MS > 0 ? OFFS_MEASURE_MS : 1));
 
     TickType_t xLastWakeTime = xTaskGetTickCount();
@@ -20,7 +19,6 @@ void TaskButtonMeasureRtosFunc(void* pvParameters) {
 
         TaskButtonMeasure();
 
-        // If a new press result appeared, wake Task2 via semaphore.
         if (!hadPending && HasPressResult()) {
             xSemaphoreGive(xPressSemaphore);
         }

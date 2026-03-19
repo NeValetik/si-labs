@@ -17,22 +17,28 @@ void TaskReportRtosFunc(void* pvParameters) {
     TickType_t xLastWakeTime = xTaskGetTickCount();
 
     for (;;) {
-        // Atomically snapshot and reset stats.
         xSemaphoreTake(xStatsMutex, portMAX_DELAY);
         PressStats Stats = GetStats();
         ResetStats();
         xSemaphoreGive(xStatsMutex);
 
-        uint32_t Avg = (Stats.TotalPresses > 0)
-                       ? (Stats.TotalDurationMs / Stats.TotalPresses)
-                       : 0;
+        uint32_t TotalCount = Stats.ShortPresses + Stats.LongPresses;
 
-        printf("\n--- Report (10s) ---\n");
-        printf("Total : %lu\n", Stats.TotalPresses);
-        printf("Short : %lu\n", Stats.ShortPresses);
-        printf("Long  : %lu\n", Stats.LongPresses);
-        printf("Avg   : %lu ms\n", Avg);
-        printf("--------------------\n");
+        if (TotalCount > 0) {
+            uint32_t AvgMs = Stats.TotalDurationMs / TotalCount;
+            uint32_t WholeSeconds = AvgMs / 1000;
+            uint32_t Decimals = (AvgMs % 1000) / 10;
+
+            printf_P(PSTR("L: %lu, S: %lu, Avg: %lu.%02lus\n\r"),
+                Stats.LongPresses,
+                Stats.ShortPresses,
+                WholeSeconds,
+                Decimals);
+        } else {
+            printf_P(PSTR("L: %lu, S: %lu, Avg: 0.00s\n\r"),
+                Stats.LongPresses,
+                Stats.ShortPresses);
+        }
 
         vTaskDelayUntil(&xLastWakeTime, RecTicks);
     }

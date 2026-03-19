@@ -7,7 +7,7 @@
 //   4 → Lab 4: Button press monitor – FreeRTOS (requires [env:mega])
 // ─────────────────────────────────────────────────────────────────────────────
 #ifndef ACTIVE_LAB
-#define ACTIVE_LAB 3
+#define ACTIVE_LAB 4
 #endif
 
 #include <Arduino.h>
