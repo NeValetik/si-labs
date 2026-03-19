@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "author": "silab",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-mega",
+      "id": "mega1",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot1",
+      "top": 300,
+      "left": 60,
+      "attrs": { "value": "10000" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_green",
+      "top": 320,
+      "left": 350,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_green",
+      "top": 280,
+      "left": 460,
+      "attrs": { "color": "green", "label": "Normal" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_red",
+      "top": 320,
+      "left": 560,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_red",
+      "top": 280,
+      "left": 670,
+      "attrs": { "color": "red", "label": "Alert" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_yellow",
+      "top": 420,
+      "left": 350,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_yellow",
+      "top": 380,
+      "left": 460,
+      "attrs": { "color": "yellow", "label": "Conditioning" }
+    }
+  ],
+  "connections": [
+    ["pot1:VCC", "mega1:5V", "red", []],
+    ["pot1:GND", "mega1:GND.1", "black", []],
+    ["pot1:SIG", "mega1:A0", "green", []],
+
+    ["mega1:12", "r_green:1", "green", []],
+    ["r_green:2", "led_green:A", "green", []],
+    ["led_green:C", "mega1:GND.2", "black", []],
+
+    ["mega1:11", "r_red:1", "red", []],
+    ["r_red:2", "led_red:A", "red", []],
+    ["led_red:C", "mega1:GND.3", "black", []],
+
+    ["mega1:10", "r_yellow:1", "#FFD600", []],
+    ["r_yellow:2", "led_yellow:A", "#FFD600", []],
+    ["led_yellow:C", "mega1:GND.4", "black", []]
+  ]
+}

@@ -1,0 +1,7 @@
+[wokwi]
+version = 1
+# Switch firmware path between lab5 and lab6:
+# Lab 5: .pio/build/mega_lab5/firmware.hex  (elf: .pio/build/mega_lab5/firmware.elf)
+# Lab 6: .pio/build/mega_lab6/firmware.hex  (elf: .pio/build/mega_lab6/firmware.elf)
+firmware = '.pio/build/mega_lab6/firmware.hex'
+elf = '.pio/build/mega_lab6/firmware.elf'

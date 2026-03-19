@@ -10,7 +10,9 @@ pio run
 
 # Build a specific environment
 pio run -e uno
-pio run -e mega        # FreeRTOS Lab 3
+pio run -e mega        # FreeRTOS Lab 4
+pio run -e mega_lab5   # FreeRTOS Lab 5 (binary threshold)
+pio run -e mega_lab6   # FreeRTOS Lab 6 (analog conditioning)
 
 # Upload to board
 pio run -e uno --target upload
@@ -31,6 +33,8 @@ There are no tests — this is embedded firmware, verified by flashing to hardwa
 | 2 | LCD + Keypad STDIO – access-code | `uno` |
 | 3 | Button monitor – bare-metal scheduler | `uno` |
 | 4 | Button monitor – FreeRTOS | `mega` |
+| 5 | Binary signal – threshold alerting (hysteresis + debounce) | `mega_lab5` |
+| 6 | Analog signal conditioning (saturation → median → weighted avg) | `mega_lab6` |
 
 ## Architecture
 
@@ -44,7 +48,7 @@ printf/scanf
 StdioRedirect (fdev_setup_stream)
      │
   IStream*
-  ├── SerialStream  →  Hardware UART        (Labs 1, 3, 4)
+  ├── SerialStream  →  Hardware UART        (Labs 1, 3, 4, 5, 6)
   └── LcdStream     →  write→LCD, read→Keypad (Lab 2)
 ```
 
@@ -71,15 +75,40 @@ RTOS tasks replace the scheduler. `vTaskStartScheduler()` is called in `SetupLab
 | `TaskPressStatsRtosFunc` | blocks on `xPressSemaphore` | takes `xStatsMutex` to write stats |
 | `TaskReportRtosFunc` | `vTaskDelayUntil` 10 000 ms | takes `xStatsMutex` to snapshot+reset |
 
+### Lab 5 — Binary Signal (Threshold Alerting) (env:mega_lab5)
+
+NTC thermistor on A0 via 10kΩ voltage divider. Three FreeRTOS tasks:
+
+| Task | Period | Role |
+|---|---|---|
+| `TaskSensorRead5Func` | 50 ms | Reads ADC, converts to temperature (Steinhart-Hart) |
+| `TaskThresholdAlert5Func` | 50 ms | Hysteresis threshold (30°C/28°C) + debounce counter (5 samples) |
+| `TaskDisplay5Func` | 500 ms | Prints RAW, temperature, threshold state, debounce counter, alert |
+
+LEDs: Green=normal (D12), Red=alert (D11). All shared data protected by `xLab5Mutex`.
+
+### Lab 6 — Analog Signal Conditioning (env:mega_lab6)
+
+Same NTC thermistor sensor. Signal conditioning pipeline in three FreeRTOS tasks:
+
+| Task | Period | Role |
+|---|---|---|
+| `TaskSensorRead6Func` | 50 ms | Reads ADC, signals conditioner via binary semaphore |
+| `TaskCondition6Func` | event-driven | Saturation [100-900] → Median filter [5] → Weighted avg [50,25,15,10] → Temp conversion |
+| `TaskDisplay6Func` | 500 ms | Prints all intermediate pipeline values + final temperature |
+
+LEDs: Green=normal (D12), Red=alert (D11), Yellow=conditioning active blink (D10).
+
 ### Component Structure
 
 - `include/interfaces/` — `IStream` pure virtual interface
-- `include/drivers/` — `LedDriver`, `SerialStream`, `LcdDriver`, `LcdStream`, `KeypadDriver`, `ButtonDriver`
+- `include/drivers/` — `LedDriver`, `SerialStream`, `LcdDriver`, `LcdStream`, `KeypadDriver`, `ButtonDriver`, `NtcSensor`
 - `include/services/` — `StdioRedirect`, `PressData`, `Scheduler`
-- `include/labs/lab3/` — task headers for Lab 3 (`TaskButtonMeasure`, `TaskPressStats`, `TaskReport`, `SyncObjects`)
+- `include/labs/lab3/` — task headers for Lab 3/4
+- `include/labs/lab5/` — Lab 5 config, sync objects, task headers
+- `include/labs/lab6/` — Lab 6 config, sync objects, signal conditioner, task headers
 - `src/components/` — all driver and service implementations
 - `src/labs/labN/` — lab entry points (`SetupLabN` / `LoopLabN`)
-- `src/labs/lab3/rtos/` — FreeRTOS task implementations (excluded from `[env:uno]`)
 - `src/main.cpp` — lab switcher via `ACTIVE_LAB`
 
 ### Key Implementation Details
