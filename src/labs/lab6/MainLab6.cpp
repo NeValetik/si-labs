@@ -23,10 +23,7 @@ volatile bool     Lab6AlertActive    = false;
 SemaphoreHandle_t xLab6Mutex     = nullptr;
 SemaphoreHandle_t xLab6NewSample = nullptr;
 
-// ── STDIO ───────────────────────────────────────────────────────────────────
 static SerialStream SerialIo;
-
-// ── Lab entry points ────────────────────────────────────────────────────────
 
 void SetupLab6() {
     SerialIo.begin(9600);
@@ -37,16 +34,13 @@ void SetupLab6() {
     InitializeLed(RedLedPin6);
     InitializeLed(YellowLedPin6);
 
-    // LEDs off at start.
     SetLedState(GreenLedPin6, true);
     SetLedState(RedLedPin6, false);
     SetLedState(YellowLedPin6, false);
 
-    // Create sync objects.
     xLab6Mutex     = xSemaphoreCreateMutex();
     xLab6NewSample = xSemaphoreCreateBinary();
 
-    // Create tasks with descending priorities.
     xTaskCreate(TaskSensorRead6Func,  "Sensor",    128, nullptr, 3, nullptr);
     xTaskCreate(TaskCondition6Func,   "Condition",  256, nullptr, 2, nullptr);
     xTaskCreate(TaskDisplay6Func,     "Display",   256, nullptr, 1, nullptr);
@@ -60,5 +54,4 @@ void SetupLab6() {
 }
 
 void LoopLab6() {
-    // Never reached: vTaskStartScheduler() does not return.
 }

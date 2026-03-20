@@ -10,15 +10,10 @@ void TaskSensorRead5Func(void* pvParameters) {
     TickType_t xLastWakeTime = xTaskGetTickCount();
 
     for (;;) {
-        // Read raw ADC from NTC sensor.
         uint16_t raw = ReadNtcRaw(NtcAnalogPin);
 
-        // Convert to temperature (tenths of °C).
-        // LinearAdcToTempC10 for potentiometer simulation,
-        // NtcAdcToTempC10 for real NTC thermistor hardware.
-        int16_t tempC10 = LinearAdcToTempC10(raw);
+        int16_t tempC10 = NtcAdcToTempC10(raw);
 
-        // Store in shared data under mutex.
         xSemaphoreTake(xLab5Mutex, portMAX_DELAY);
         Lab5RawAdc  = raw;
         Lab5TempC10 = tempC10;

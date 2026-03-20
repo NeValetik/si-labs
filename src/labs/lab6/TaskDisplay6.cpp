@@ -12,7 +12,6 @@ void TaskDisplay6Func(void* pvParameters) {
     for (;;) {
         vTaskDelayUntil(&xLastWakeTime, Interval);
 
-        // Snapshot shared data.
         xSemaphoreTake(xLab6Mutex, portMAX_DELAY);
         uint16_t raw     = Lab6RawAdc;
         uint16_t sat     = Lab6Saturated;
@@ -22,7 +21,6 @@ void TaskDisplay6Func(void* pvParameters) {
         bool     alert   = Lab6AlertActive;
         xSemaphoreGive(xLab6Mutex);
 
-        // Format temperature: e.g. 253 -> "25.3"
         int16_t whole = tempC10 / 10;
         uint16_t frac = (uint16_t)(tempC10 < 0 ? -(tempC10 % 10) : (tempC10 % 10));
 

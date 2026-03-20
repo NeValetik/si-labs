@@ -7,7 +7,6 @@ uint16_t ApplySaturation(uint16_t value, uint16_t minVal, uint16_t maxVal) {
 }
 
 uint16_t ApplyMedianFilter(uint16_t* buffer, uint8_t bufferSize) {
-    // Simple insertion sort on a small copy.
     uint16_t sorted[bufferSize];
     for (uint8_t i = 0; i < bufferSize; i++) {
         sorted[i] = buffer[i];

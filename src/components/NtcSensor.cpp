@@ -14,15 +14,8 @@ float NtcAdcToTempC(uint16_t adcValue) {
     if (adcValue == 0) adcValue = 1;
     if (adcValue >= 1023) adcValue = 1022;
 
-    // Compute NTC resistance from voltage divider.
-    // VCC -> R_fixed -> ADC_pin -> NTC -> GND
-    // V_adc = VCC * R_ntc / (R_fixed + R_ntc)
-    // ADC   = 1023 * R_ntc / (R_fixed + R_ntc)
-    // R_ntc = R_fixed * ADC / (1023 - ADC)
     float resistance = NtcRFixed * (float)adcValue / (1023.0f - (float)adcValue);
 
-    // Steinhart-Hart B-parameter equation:
-    // 1/T = 1/T0 + (1/B) * ln(R/R0)
     float steinhart = log(resistance / NtcR0) / NtcBeta;
     steinhart += 1.0f / NtcT0K;
     float temperatureK = 1.0f / steinhart;

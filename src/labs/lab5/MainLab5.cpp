@@ -12,7 +12,6 @@
 #include "labs/lab5/TaskThresholdAlert5.h"
 #include "labs/lab5/TaskDisplay5.h"
 
-// ── Shared data definitions ─────────────────────────────────────────────────
 volatile uint16_t Lab5RawAdc          = 0;
 volatile int16_t  Lab5TempC10         = 0;
 volatile bool     Lab5AlertActive     = false;
@@ -21,10 +20,7 @@ volatile uint8_t  Lab5DebounceCounter = 0;
 
 SemaphoreHandle_t xLab5Mutex = nullptr;
 
-// ── STDIO ───────────────────────────────────────────────────────────────────
 static SerialStream SerialIo;
-
-// ── Lab entry points ────────────────────────────────────────────────────────
 
 void SetupLab5() {
     SerialIo.begin(9600);
@@ -34,14 +30,11 @@ void SetupLab5() {
     InitializeLed(GreenLedPin5);
     InitializeLed(RedLedPin5);
 
-    // LEDs off at start.
     SetLedState(GreenLedPin5, true);
     SetLedState(RedLedPin5, false);
 
-    // Create mutex for shared data.
     xLab5Mutex = xSemaphoreCreateMutex();
 
-    // Create tasks with descending priorities.
     xTaskCreate(TaskSensorRead5Func,      "Sensor",    128, nullptr, 3, nullptr);
     xTaskCreate(TaskThresholdAlert5Func,   "Threshold", 128, nullptr, 2, nullptr);
     xTaskCreate(TaskDisplay5Func,          "Display",   256, nullptr, 1, nullptr);
@@ -55,5 +48,4 @@ void SetupLab5() {
 }
 
 void LoopLab5() {
-    // Never reached: vTaskStartScheduler() does not return.
 }
