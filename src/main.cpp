@@ -7,6 +7,8 @@
 //   4 → Lab 4: Button press monitor – FreeRTOS (requires [env:mega])
 //   5 → Lab 5: Binary signal – threshold alerting with hysteresis (FreeRTOS)
 //   6 → Lab 6: Analog signal conditioning pipeline (FreeRTOS)
+//   7 → Lab 7: Binary actuator control – relay via ON/OFF commands (FreeRTOS)
+//   8 → Lab 8: Analog actuator control – motor DC via PWM + ramp (FreeRTOS)
 // ─────────────────────────────────────────────────────────────────────────────
 #ifndef ACTIVE_LAB
 #define ACTIVE_LAB 6
@@ -26,6 +28,10 @@ void SetupLab5();
 void LoopLab5();
 void SetupLab6();
 void LoopLab6();
+void SetupLab7();
+void LoopLab7();
+void SetupLab8();
+void LoopLab8();
 
 void setup() {
 #if ACTIVE_LAB == 1
@@ -40,8 +46,12 @@ void setup() {
     SetupLab5();
 #elif ACTIVE_LAB == 6
     SetupLab6();
+#elif ACTIVE_LAB == 7
+    SetupLab7();
+#elif ACTIVE_LAB == 8
+    SetupLab8();
 #else
-    #error "Unknown ACTIVE_LAB value. Set it to 1-6."
+    #error "Unknown ACTIVE_LAB value. Set it to 1-8."
 #endif
 }
 
@@ -58,5 +68,9 @@ void loop() {
     LoopLab5();
 #elif ACTIVE_LAB == 6
     LoopLab6();
+#elif ACTIVE_LAB == 7
+    LoopLab7();
+#elif ACTIVE_LAB == 8
+    LoopLab8();
 #endif
 }
