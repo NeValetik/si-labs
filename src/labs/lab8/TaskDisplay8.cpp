@@ -19,12 +19,12 @@ void TaskDisplay8Func(void* pvParameters) {
         uint8_t wavg  = Lab8WeightedAvg;
         uint8_t tgt   = Lab8RampTarget;
         uint8_t spd   = Lab8CurrentSpeed;
-        uint8_t pwm   = Lab8PwmValue;
+        uint8_t ang   = Lab8ServoAngle;
         bool    alert = Lab8AlertActive;
         xSemaphoreGive(xLab8Mutex);
 
-        printf_P(PSTR("CMD:%u SAT:%u MED:%u AVG:%u TGT:%u SPD:%u%% PWM:%u %s\n"),
-            cmd, sat, med, wavg, tgt, spd, pwm,
+        printf_P(PSTR("CMD:%u SAT:%u MED:%u AVG:%u TGT:%u SPD:%u%% ANG:%u %s\n"),
+            cmd, sat, med, wavg, tgt, spd, ang,
             alert ? "LIMIT" : "OK");
     }
 }

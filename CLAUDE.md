@@ -105,29 +105,29 @@ LEDs: Green=normal (D12), Red=alert (D11), Yellow=conditioning active blink (D10
 
 ### Lab 7 — Binary Actuator Control (env:mega_lab7)
 
-Relay (simulated as LED on D9) controlled via serial ON/OFF commands. Four FreeRTOS tasks:
+Relay (simulated as LED on D9) controlled via 4×4 keypad input; status report printed over serial. Four FreeRTOS tasks:
 
 | Task | Period | Role |
 |---|---|---|
-| `TaskCommandRead7Func` | 50 ms | Non-blocking serial read, parses ON/OFF/1/0 commands |
+| `TaskCommandRead7Func` | 50 ms | Polls keypad: `1`/`A`→ON, `0`/`B`→OFF |
 | `TaskCondition7Func` | 50 ms | Temporal debouncing (5 consecutive identical values to confirm state change) |
 | `TaskActuatorControl7Func` | 100 ms | Drives relay output, updates status LEDs |
 | `TaskDisplay7Func` | 500 ms | Prints CMD, conditioned state, debounce counter, actuator state |
 
-LEDs: Green=OFF/safe (D12), Red=ON/energised (D11), Yellow=activity blink (D10). Relay output on D9.
+Keypad rows on D2–D5, columns on A0–A3. LEDs: Green=OFF/safe (D12), Red=ON/energised (D11), Yellow=activity blink (D10). Relay output on D9.
 
 ### Lab 8 — Analog Actuator Control (env:mega_lab8)
 
-DC motor via L298 driver with PWM. Signal conditioning pipeline for command signal. Four FreeRTOS tasks:
+Servo motor driven via the `Servo` library. Signal conditioning pipeline for command signal. Four FreeRTOS tasks:
 
 | Task | Period | Role |
 |---|---|---|
-| `TaskCommandRead8Func` | 50 ms | Non-blocking serial read, parses speed 0-100% |
+| `TaskCommandRead8Func` | 50 ms | Reads serial line OR keypad digits (`#` commits, `*` clears, `A` = 0% emergency stop) |
 | `TaskCondition8Func` | event-driven | Saturation [0-100] → Median [5] → Weighted avg [50,25,15,10] |
-| `TaskActuatorControl8Func` | 50 ms | Ramp (soft start/stop, 2%/tick) → PWM conversion [0-255] → analogWrite |
-| `TaskDisplay8Func` | 500 ms | Prints all pipeline values + current speed + PWM duty |
+| `TaskActuatorControl8Func` | 50 ms | Ramp (soft start/stop, 2%/tick) → angle map [0-180°] → `Servo::write` |
+| `TaskDisplay8Func` | 500 ms | Prints all pipeline values + current speed + servo angle |
 
-Motor: PWM=D9 (ENA), IN1=D8, IN2=D7. LEDs: Green=OK (D12), Red=limit (D11), Yellow=conditioning blink (D10).
+Servo signal on D9. Keypad rows on D2–D5, columns on A0–A3. LEDs: Green=OK (D12), Red=limit (D11), Yellow=conditioning blink (D10).
 
 ### Component Structure
 

@@ -4,6 +4,7 @@
 #include <semphr.h>
 #include "drivers/LedDriver.h"
 #include "drivers/SerialStream.h"
+#include "drivers/KeypadDriver.h"
 #include "services/StdioRedirect.h"
 #include "labs/lab7/Lab7Config.h"
 #include "labs/lab7/Lab7Sync.h"
@@ -34,6 +35,14 @@ void SetupLab7() {
     InitializeLed(RedLedPin7);
     InitializeLed(YellowLedPin7);
 
+    const uint8_t RowPins[KeypadRowCount] = {
+        KeypadRow0Pin7, KeypadRow1Pin7, KeypadRow2Pin7, KeypadRow3Pin7
+    };
+    const uint8_t ColPins[KeypadColCount] = {
+        KeypadCol0Pin7, KeypadCol1Pin7, KeypadCol2Pin7, KeypadCol3Pin7
+    };
+    InitializeKeypad(RowPins, ColPins);
+
     SetLedState(RelayPin7, false);
     SetLedState(GreenLedPin7, true);
     SetLedState(RedLedPin7, false);
@@ -49,7 +58,8 @@ void SetupLab7() {
 
     printf_P(PSTR("Lab 7: Binary Actuator Control\n"));
     printf_P(PSTR("Actuator: Relay on D%u\n"), RelayPin7);
-    printf_P(PSTR("Commands: ON/1 OFF/0\n"));
+    printf_P(PSTR("Keypad: %c/%c=ON  %c/%c=OFF\n"),
+        KeyOnPrimary7, KeyOnAlt7, KeyOffPrimary7, KeyOffAlt7);
     printf_P(PSTR("Debounce: %u samples\n"), DebounceCount7);
 
     vTaskStartScheduler();

@@ -10,8 +10,8 @@ extern volatile uint8_t Lab8Saturated;         // after saturation
 extern volatile uint8_t Lab8MedianFiltered;    // after median filter
 extern volatile uint8_t Lab8WeightedAvg;       // after weighted average
 extern volatile uint8_t Lab8RampTarget;        // conditioning output → ramp target
-extern volatile uint8_t Lab8CurrentSpeed;      // actual speed after ramp [0-100%]
-extern volatile uint8_t Lab8PwmValue;          // PWM duty [0-255]
+extern volatile uint8_t Lab8CurrentSpeed;      // actual command after ramp [0-100%]
+extern volatile uint8_t Lab8ServoAngle;        // servo angle [0-180°]
 extern volatile bool    Lab8AlertActive;       // limit / overload alert
 
 // ── Synchronisation ─────────────────────────────────────────────────────────

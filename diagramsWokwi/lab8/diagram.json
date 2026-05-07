@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "author": "silab",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-mega",
+      "id": "mega1",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-membrane-keypad",
+      "id": "kp1",
+      "top": 200,
+      "left": -180,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-servo",
+      "id": "servo1",
+      "top": 100,
+      "left": 400,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_green",
+      "top": 420,
+      "left": 60,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_green",
+      "top": 380,
+      "left": 170,
+      "attrs": { "color": "green", "label": "OK" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_red",
+      "top": 420,
+      "left": 260,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_red",
+      "top": 380,
+      "left": 370,
+      "attrs": { "color": "red", "label": "Limit" }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r_yellow",
+      "top": 420,
+      "left": 460,
+      "attrs": { "value": "220" }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led_yellow",
+      "top": 380,
+      "left": 570,
+      "attrs": { "color": "yellow", "label": "Conditioning" }
+    }
+  ],
+  "connections": [
+    ["kp1:R1", "mega1:2", "purple", []],
+    ["kp1:R2", "mega1:3", "purple", []],
+    ["kp1:R3", "mega1:4", "purple", []],
+    ["kp1:R4", "mega1:5", "purple", []],
+    ["kp1:C1", "mega1:A0", "orange", []],
+    ["kp1:C2", "mega1:A1", "orange", []],
+    ["kp1:C3", "mega1:A2", "orange", []],
+    ["kp1:C4", "mega1:A3", "orange", []],
+
+    ["servo1:V+",  "mega1:5V",     "red",   []],
+    ["servo1:GND", "mega1:GND.1",  "black", []],
+    ["servo1:PWM", "mega1:9",      "blue",  []],
+
+    ["mega1:12", "r_green:1", "green", []],
+    ["r_green:2", "led_green:A", "green", []],
+    ["led_green:C", "mega1:GND.2", "black", []],
+
+    ["mega1:11", "r_red:1", "red", []],
+    ["r_red:2", "led_red:A", "red", []],
+    ["led_red:C", "mega1:GND.3", "black", []],
+
+    ["mega1:10", "r_yellow:1", "#FFD600", []],
+    ["r_yellow:2", "led_yellow:A", "#FFD600", []],
+    ["led_yellow:C", "mega1:GND.4", "black", []]
+  ]
+}

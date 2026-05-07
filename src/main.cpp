@@ -11,7 +11,7 @@
 //   8 → Lab 8: Analog actuator control – motor DC via PWM + ramp (FreeRTOS)
 // ─────────────────────────────────────────────────────────────────────────────
 #ifndef ACTIVE_LAB
-#define ACTIVE_LAB 6
+#define ACTIVE_LAB 7
 #endif
 
 #include <Arduino.h>
