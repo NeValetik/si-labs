@@ -15,6 +15,8 @@ pio run -e mega_lab5   # FreeRTOS Lab 5 (binary threshold)
 pio run -e mega_lab6   # FreeRTOS Lab 6 (analog conditioning)
 pio run -e mega_lab7   # FreeRTOS Lab 7 (binary actuator control)
 pio run -e mega_lab8   # FreeRTOS Lab 8 (analog actuator control)
+pio run -e mega_lab9   # FreeRTOS Lab 9 (ON-OFF hysteresis control)
+pio run -e mega_lab10  # FreeRTOS Lab 10 (PID control)
 
 # Upload to board
 pio run -e uno --target upload
@@ -38,7 +40,9 @@ There are no tests — this is embedded firmware, verified by flashing to hardwa
 | 5 | Binary signal – threshold alerting (hysteresis + debounce) | `mega_lab5` |
 | 6 | Analog signal conditioning (saturation → median → weighted avg) | `mega_lab6` |
 | 7 | Binary actuator control – relay via ON/OFF commands (debounce) | `mega_lab7` |
-| 8 | Analog actuator control – motor DC via PWM + signal conditioning + ramp | `mega_lab8` |
+| 8 | Analog actuator control – servo via PWM + signal conditioning + ramp | `mega_lab8` |
+| 9 | Automatic ON-OFF control with hysteresis (NTC + servo) | `mega_lab9` |
+| 10 | Automatic PID control (NTC + servo) | `mega_lab10` |
 
 ## Architecture
 
@@ -129,6 +133,34 @@ Servo motor driven via the `Servo` library. Signal conditioning pipeline for com
 
 Servo signal on D9. Keypad rows on D2–D5, columns on A0–A3. LEDs: Green=OK (D12), Red=limit (D11), Yellow=conditioning blink (D10).
 
+### Lab 9 — ON-OFF Hysteresis Control (env:mega_lab9)
+
+NTC thermistor (A0) is the process variable; servo on D9 is the actuator (Variant B). Setpoint configurable via keypad or serial. Five FreeRTOS tasks:
+
+| Task | Period | Role |
+|---|---|---|
+| `TaskAcquisition9Func` | 50 ms | Reads NTC, converts to tenths °C |
+| `TaskCommandRead9Func` | 50 ms | Serial line + keypad: digits + `#` commit, `*` clear, `A`/`B` ±1°C, `C`/`D` ±10°C |
+| `TaskControl9Func` | 50 ms | ON-OFF logic with ±1°C hysteresis (state held inside the dead-band) |
+| `TaskActuator9Func` | 50 ms | Drives servo to `ServoAngleHeat9` (180°) when output ON, `ServoAngleCool9` (0°) when OFF |
+| `TaskDisplay9Func` | 500 ms | Plotter line `SP:.. PV:.. OUT:.. ANG:..` + human-readable `# SP=… PV=… OUT=…` |
+
+Default SP = 25.0°C, hysteresis = ±1.0°C. Keypad: rows D2–D5, columns A1–A4 (A0 reserved for NTC). LEDs: Green=OFF (D12), Red=ON/heat (D11), Yellow=tick blink (D10).
+
+### Lab 10 — PID Control (env:mega_lab10)
+
+Same hardware as Lab 9 (NTC → servo). PID computed in `PidController.cpp` using Q8.8 fixed-point gains; output mapped to servo angle around 90° centre. Five FreeRTOS tasks plus a separate PID module:
+
+| Task | Period | Role |
+|---|---|---|
+| `TaskAcquisition10Func` | 50 ms | Reads NTC, converts to tenths °C |
+| `TaskCommandRead10Func` | 50 ms | Setpoint via keypad/serial; serial also accepts `P1.5`, `I0.05`, `D0.5`, `RESET` |
+| `TaskControl10Func` | 100 ms | `PidStep()` with anti-windup (`IntegralLimit10`) and output clamp `[-100,+100]` |
+| `TaskActuator10Func` | 50 ms | Maps PID output → servo angle = 90° ± (out·90/100) |
+| `TaskDisplay10Func` | 500 ms | Plotter line + human-readable status with current Kp/Ki/Kd |
+
+Defaults: Kp=4.0, Ki=0.10, Kd=0.50. Resetting integrator on every gain change avoids surprise windup kicks. LEDs: Green=in-band (|err|≤1°C, D12), Red=output saturated (D11), Yellow=tick blink (D10).
+
 ### Component Structure
 
 - `include/interfaces/` — `IStream` pure virtual interface
@@ -139,6 +171,8 @@ Servo signal on D9. Keypad rows on D2–D5, columns on A0–A3. LEDs: Green=OK (
 - `include/labs/lab6/` — Lab 6 config, sync objects, signal conditioner, task headers
 - `include/labs/lab7/` — Lab 7 config, sync objects, task headers
 - `include/labs/lab8/` — Lab 8 config, sync objects, actuator conditioner, task headers
+- `include/labs/lab9/` — Lab 9 config, sync objects, task headers (ON-OFF hysteresis)
+- `include/labs/lab10/` — Lab 10 config, sync objects, `PidController.h`, task headers
 - `src/components/` — all driver and service implementations
 - `src/labs/labN/` — lab entry points (`SetupLabN` / `LoopLabN`)
 - `src/main.cpp` — lab switcher via `ACTIVE_LAB`
