@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(pio run:*)",
-      "Bash(grep -E \"\\\\.\\(h|cpp|hpp\\)$\")"
+      "Bash(grep -E \"\\\\.\\(h|cpp|hpp\\)$\")",
+      "Bash(Get-ChildItem -Path \"E:\\\\silab\\\\labs\" -Recurse -Filter \"*lab9*\" -Directory)",
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem -Path \"E:\\\\silab\\\\labs\" -Directory)",
+      "Bash(Select-Object Name)",
+      "PowerShell(pio run *)"
     ]
   }
 }

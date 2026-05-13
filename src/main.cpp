@@ -11,6 +11,7 @@
 //   8  → Lab 8: Analog actuator control – servo via PWM + ramp (FreeRTOS)
 //   9  → Lab 9: ON-OFF hysteresis control – NTC + servo (FreeRTOS)
 //   10 → Lab 10: PID control – NTC + servo (FreeRTOS)
+//   11 → Lab 11: FSM ButtonLED – behavioural control with finite state machine (FreeRTOS)
 // ─────────────────────────────────────────────────────────────────────────────
 #ifndef ACTIVE_LAB
 #define ACTIVE_LAB 7
@@ -38,6 +39,8 @@ void SetupLab9();
 void LoopLab9();
 void SetupLab10();
 void LoopLab10();
+void SetupLab11();
+void LoopLab11();
 
 void setup() {
 #if ACTIVE_LAB == 1
@@ -60,8 +63,10 @@ void setup() {
     SetupLab9();
 #elif ACTIVE_LAB == 10
     SetupLab10();
+#elif ACTIVE_LAB == 11
+    SetupLab11();
 #else
-    #error "Unknown ACTIVE_LAB value. Set it to 1-10."
+    #error "Unknown ACTIVE_LAB value. Set it to 1-11."
 #endif
 }
 
@@ -86,5 +91,7 @@ void loop() {
     LoopLab9();
 #elif ACTIVE_LAB == 10
     LoopLab10();
+#elif ACTIVE_LAB == 11
+    LoopLab11();
 #endif
 }
